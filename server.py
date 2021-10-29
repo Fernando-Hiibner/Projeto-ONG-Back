@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-from aplication import App
+from app import App
 
 if __name__ == '__main__':
     # Carrega as variáveis de ambiente
