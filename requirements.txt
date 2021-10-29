@@ -1,0 +1,4 @@
+flask
+flask_monitoringdashboard
+werkzeug
+python-dotenv
