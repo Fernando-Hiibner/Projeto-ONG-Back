@@ -1,6 +1,11 @@
 from dotenv import load_dotenv
 import os
 from app import App
+from flask_jwt_extended import JWTManager
+
+App.config['JWT_SECRET_KEY'] = 'erena_morena'
+App.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
+JWTManager(App)
 
 if __name__ == '__main__':
     # Carrega as variáveis de ambiente

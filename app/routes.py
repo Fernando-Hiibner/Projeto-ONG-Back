@@ -1,5 +1,9 @@
 from flask import request, make_response, jsonify
+from flask_jwt_extended import (jwt_required)
 from app import App
+
+# Importando os controller
+from controllers.loginController import LoginController
 
 # Bloquear logs de endpoints de rotas especificas
 from werkzeug import serving
@@ -24,6 +28,30 @@ def disable_endpoint_logs():
 # Atualmente desnecessario
 # disable_endpoint_logs()
 
-@App.route('/')
+@App.route('/', methods=['GET'])
 def raiz():
     return make_response(jsonify({"Mensagem" : "Bem vindo a API do Projeto ONG"})), 200
+
+@App.route('/createUser', methods=['POST'])
+def createUser():
+    BODY = request.get_json(force=True)
+    _LoginController = LoginController()
+    return _LoginController.createUser(BODY['email'], BODY['password'])
+
+@App.route('/login', methods=['POST'])
+def login():
+    BODY = request.get_json(force=True)
+    _LoginController = LoginController()
+    return _LoginController.authUser(BODY['email'], BODY['password'])
+
+@App.route('/changePassword', methods=['POST'])
+def changePassword():
+    BODY = request.get_json(force=True)
+    _LoginController = LoginController()
+    return _LoginController.changePassword(BODY['email'], BODY['password'])
+
+@App.route('/deleteUser', methods=['POST'])
+def deleteUser():
+    BODY = request.get_json(force=True)
+    _LoginController = LoginController()
+    return _LoginController.changePassword(BODY['email'])
