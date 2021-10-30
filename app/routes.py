@@ -3,7 +3,7 @@ from flask_jwt_extended import (jwt_required)
 from app import App
 
 # Importando os controller
-from controllers.loginController import LoginController
+from .controllers.loginController import LoginController
 
 # Bloquear logs de endpoints de rotas especificas
 from werkzeug import serving
@@ -36,7 +36,7 @@ def raiz():
 def createUser():
     BODY = request.get_json(force=True)
     _LoginController = LoginController()
-    return _LoginController.createUser(BODY['email'], BODY['password'])
+    return _LoginController.createUser(BODY['email'], BODY['password'], BODY['accountType'])
 
 @App.route('/login', methods=['POST'])
 def login():

@@ -1,52 +1,48 @@
 import re
 import json
-from hashlib import sha256
+from random import randint
+from hashlib import sha256, md5
 from flask_jwt_extended import create_access_token
+from datetime import date, datetime
+
+from ..database.conexaoMySql import ConexaoMySQL
+from ..models.consultasSQL import ConsultasSQL
 
 class LoginController:
-    def createUser(email, password):
-        # Conecta no banco
+    def createUser(self, email, password, accountType):
+        DB = ConexaoMySQL()
+        conn = DB.connect()
+        cursor = conn.cursor()
+
         encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
+        hash = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
+        creationDate = datetime.now()
+        creationDate = creationDate.strftime("%Y-%m-%d %H:%M:%S")
 
         if not re.match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$',email):
             return json.dumps({'type': 'WARNING', 'msg': 'Email inválido!'})
         else:
-            ...
-        #     try:
-        #         sql=cnxn.execute('''
-        #         begin tran
-        #             if not exists(
-        #             select * from Tabela
-        #             where email_usuario = '%s'
-        #             )
-        #             BEGIN
-        #                 insert into Tabela
-        #                 (colunas)
-        #                 VALUES('%s', '%s','%s','%s', getdate(), getdate());
-        #             END
-        #             else
-        #             begin
-        #                 select * from Tabela
-        #                 where email_usuario = '%s'
-        #                 end
-        #             commit tran
-        #         '''%(email,nomeUser,email,login,password,email))
-        #         sql.commit()
+            try:
+                sql = f"""SELECT EMAIL FROM CONTA WHERE EMAIL = '{email}';"""
+                cursor.execute(sql)
+                query = cursor.fetchall()
 
-        #         rc = sql.rowcount
-        #         if rc < 0:
-        #             return json.dumps({'type': 'WARNING', 'msg': 'Este email já está em uso por outro usuário!'})
+                if len(query) > 0:
+                    return json.dumps({'type': 'WARNING', 'msg': 'Este email já está em uso por outro usuário!'})
+                else:
+                    sql = f"""INSERT INTO PROJETO_ONG.CONTA (EMAIL, SENHA, TIPO_CONTA, DATA_CRIACAO, HASH)
+                              VALUES ('{email}', '{encriptedPassword}', '{accountType}', '{creationDate}', '{hash}')"""
+                    cursor.execute(sql)
+                    conn.commit()
+                conn.close()
+            except Exception as e:
+                return json.dumps({'type': 'ERROR', 'msg': str(e)})
+        # TODO Enviar o email com o hash pro usuario poder verificar depois
+        return json.dumps({'type': 'SUCCESS', 'msg': 'Cadastro efetuado com sucesso!'})
 
-        #     except Exception as e:
-        #         return json.dumps({'type': 'WARNING', 'msg': 'Usuário já cadastrado! '})
-
-        # return json.dumps({'type': 'SUCCESS', 'msg': 'Cadastro efetuado com sucesso!'})
-
-    def authUser(email, password):
+    def authUser(hash):
         # Conectar no banco
-
-        encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
-
+        ...
         # Buscar os users registrados no banco
 
         # sql = cnxn.execute('''
@@ -69,6 +65,9 @@ class LoginController:
         #         access_token = create_access_token(identity=login)
 
         #         return jsonify(token=access_token,user=login, data = data), 200
+
+    def login(email, password):
+        encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
 
     def deleteUser(email):
         ...
