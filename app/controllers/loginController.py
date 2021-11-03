@@ -25,6 +25,8 @@ class LoginController:
             return json.dumps({'type': 'ERROR', 'msg': 'Email inválido!'})
         else:
             try:
+                # TODO Aqui na criação, tem que pegar aqueles dados (Nome, Sobrenome e etc) e ja criar o perfil Ong ou voluntario dependendo do tipo de conta
+                # TODO Colocar os campos pra essas coisas certinho no front
                 sql = f"""SELECT EMAIL FROM PROJETO_ONG.CONTA WHERE EMAIL = '{email}';"""
                 cursor.execute(sql)
                 query = cursor.fetchall()
@@ -41,7 +43,6 @@ class LoginController:
             except Exception as e:
                 conn.close()
                 return json.dumps({'type': 'ERROR', 'msg': str(e)})
-        # TODO Enviar o email com o hash pro usuario poder verificar depois
         emailSender = Mail()
         emailSender.send([email], "Teste Projeto Ong", f"{email}\n{hash}")
         return json.dumps({'type': 'SUCCESS', 'msg': 'Cadastro efetuado com sucesso!'})
