@@ -28,7 +28,7 @@ def disable_endpoint_logs():
 # Atualmente desnecessario
 # disable_endpoint_logs()
 
-@App.route('/', methods=['GET'])
+@App.route('/', methods=['GET', 'POST'])
 def raiz():
     return make_response(jsonify({"Mensagem" : "Bem vindo a API do Projeto ONG"})), 200
 
@@ -38,11 +38,17 @@ def createUser():
     _LoginController = LoginController()
     return _LoginController.createUser(BODY['email'], BODY['password'], BODY['accountType'])
 
+@App.route('/authUser', methods=['POST'])
+def authUser():
+    BODY = request.get_json(force=True)
+    _LoginController = LoginController()
+    return _LoginController.authUser(BODY['email'], BODY['hash'])
+
 @App.route('/login', methods=['POST'])
 def login():
     BODY = request.get_json(force=True)
     _LoginController = LoginController()
-    return _LoginController.authUser(BODY['email'], BODY['password'])
+    return _LoginController.login(BODY['email'], BODY['password'])
 
 @App.route('/changePassword', methods=['POST'])
 def changePassword():
@@ -54,4 +60,4 @@ def changePassword():
 def deleteUser():
     BODY = request.get_json(force=True)
     _LoginController = LoginController()
-    return _LoginController.changePassword(BODY['email'])
+    return _LoginController.deleteUser(BODY['email'])
