@@ -50,14 +50,21 @@ def login():
     _LoginController = LoginController()
     return _LoginController.login(BODY['email'], BODY['password'])
 
+@App.route('/requestChangePassword', methods=['POST'])
+def requestChangePassword():
+    BODY = request.get_json(force=True)
+    _LoginController = LoginController()
+    return _LoginController.requestChangePassword(BODY['email'])
+
 @App.route('/changePassword', methods=['POST'])
 def changePassword():
     BODY = request.get_json(force=True)
     _LoginController = LoginController()
-    return _LoginController.changePassword(BODY['email'], BODY['password'])
+    return _LoginController.changePassword(BODY['email'], BODY['password'], BODY['verification_cod'])
 
-@App.route('/deleteUser', methods=['POST'])
-def deleteUser():
-    BODY = request.get_json(force=True)
-    _LoginController = LoginController()
-    return _LoginController.deleteUser(BODY['email'])
+# TODO Implementar no MVP, precisa da tela "Perfil" para funcionar
+# @App.route('/deleteUser', methods=['POST'])
+# def deleteUser():
+#     BODY = request.get_json(force=True)
+#     _LoginController = LoginController()
+#     return _LoginController.deleteUser(BODY['email'])

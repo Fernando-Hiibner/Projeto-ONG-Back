@@ -8,7 +8,7 @@ class ConexaoMySQL:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="developer",
-            password="Baozi123"
+            password="dev123"
         )
         return self.conn
 
