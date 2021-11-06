@@ -129,10 +129,12 @@ class LoginController:
                     dbSenha = query[0][1]
                     verificada = query[0][2]
 
-                    if verificada == 0:
-                        conn.close()
-                        return dumps({'type': 'ERROR', 'msg': 'Esta conta não esta verificada!'})
-                    elif encriptedPassword != dbSenha:
+                    # TODO Adicionar essa validação no MVP
+                    # if verificada == 0:
+                    #     conn.close()
+                    #     return dumps({'type': 'ERROR', 'msg': 'Esta conta não esta verificada!'})
+                    # elif encriptedPassword != dbSenha:
+                    if encriptedPassword != dbSenha:
                         conn.close()
                         return dumps({'type': 'ERROR', 'msg': 'Senha incorreta'})
                     else:
