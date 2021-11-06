@@ -14,8 +14,8 @@ class LoginController:
         self.consultasSql_Login = ConsultasSQL_Login()
         self.accountTypes = ['Voluntario', 'ONG']
 
-    # TODO Validar password vazio, validar accountType que não seja permitido
-    def createUser(self, email: str, password: str, accountType: str):
+    # TODO Validar password vazio, validar accountType que não seja permitido - Pro MVP
+    def createUser(self, email: str, password: str, accountType: str, userInfo: dict):
         if accountType not in self.accountTypes:
             return dumps({"type": "ERROR", "msg" : "Tipo de conta invalido!"})
         DB = ConexaoMySQL()
@@ -41,11 +41,11 @@ class LoginController:
                 else:
                     cursor.execute(self.consultasSql_Login.queryInsertConta(email, encriptedPassword, accountType, creationDate, hash))
                     if accountType == "Voluntario":
-                        # TODO Aqui inserir as informações do voluntario na tabela voluntario
-                        ...
+                        # DONE Aqui inserir as informações do voluntario na tabela voluntarios
+                        cursor.execute(self.consultasSql_Login.queryInsertVoluntario(email, userInfo['name'], userInfo['surname'], userInfo['age'], userInfo['gender']))
                     else:
-                        # TODO 
-                        ...
+                        # DONE Aqui inserir as informações da ong na tabela ongs
+                        cursor.execute(self.consultasSql_Login.queryInsertOng(email, userInfo['name']))
                     emailSender = Mail()
                     emailSender.send([email], "Teste Projeto Ong", f"{email}\n{hash}")
                     conn.commit()
@@ -55,11 +55,14 @@ class LoginController:
                 return dumps({'type': 'ERROR', 'msg': str(e)})
         return dumps({'type': 'SUCCESS', 'msg': 'Cadastro efetuado com sucesso!'})
 
-    # TODO Atualizar a data de atualização
+    # DONE Atualizar a data de atualização
     def authUser(self, email: str, hash: str):
         DB = ConexaoMySQL()
         conn = DB.connect()
         cursor = conn.cursor()
+
+        updateDate = datetime.now()
+        updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
 
         if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
             conn.close()
@@ -83,7 +86,7 @@ class LoginController:
                     conn.close()
                     return dumps({'type': 'ERROR', 'msg': 'Código incorreto!'})
                 elif hash == dbHash:
-                    cursor.execute(self.consultasSql_Login.queryUpdateVerificada(email))
+                    cursor.execute(self.consultasSql_Login.queryUpdateVerificada(email, updateDate))
                     conn.commit()
                 conn.close()
             except Exception as e:
@@ -171,13 +174,15 @@ class LoginController:
 
         return dumps({'type': 'SUCCESS', 'msg': 'Requisição feita com sucesso'})
 
-    # TODO Atualizar a data de atualização
+    # DONE Atualizar a data de atualização
     def changePassword(self, email: str, password: str, verification_cod: str):
         DB = ConexaoMySQL()
         conn = DB.connect()
         cursor = conn.cursor()
 
         encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
+        updateDate = datetime.now()
+        updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
 
         if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
             conn.close()
@@ -197,7 +202,7 @@ class LoginController:
                 if len(query) > 0:
                     dbVerificationCod = query[0][0]
                     if dbVerificationCod == verification_cod:
-                        cursor.execute(self.consultasSql_Login.queryUpdateSenha(email, encriptedPassword))
+                        cursor.execute(self.consultasSql_Login.queryUpdateSenha(email, encriptedPassword, updateDate))
                         conn.commit()
                         conn.close()
                     else:

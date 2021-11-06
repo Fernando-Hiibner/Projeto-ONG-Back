@@ -36,7 +36,7 @@ def raiz():
 def createUser():
     BODY = request.get_json(force=True)
     _LoginController = LoginController()
-    return _LoginController.createUser(BODY['email'], BODY['password'], BODY['accountType'])
+    return _LoginController.createUser(BODY['email'], BODY['password'], BODY['accountType'], BODY['userInfo'])
 
 @App.route('/authUser', methods=['POST'])
 def authUser():

@@ -10,15 +10,29 @@ class ConsultasSQL_Login:
             VALUES ('{email}', '{encriptedPassword}', '{accountType}', '{creationDate}', '{hash}')"""
         return sql
 
+    def queryInsertVoluntario(self, email: str, name: str, surname: str, age: str, gender: str):
+        """Insere um voluntario na tabela VOLUNTARIO, descricao e rank são omitidos nessa etapda"""
+        sql = f"""INSERT INTO PROJETO_ONG.VOLUNTARIOS (EMAIL, NOME, SOBRENOME, IDADE, GENERO)
+                  VALUES ('{email}', '{name}', '{surname}', '{age}', '{gender}')"""
+        return sql
+
+    def queryInsertOng(self, email: str, name: str):
+        """Insere uma ong na tabela ONGS, descricao e descricao_doacao são omitidos nessa etapda"""
+        sql = f"""INSERT INTO PROJETO_ONG.ONGS (EMAIL, NOME)
+                  VALUES ('{email}', '{name}')"""
+        return sql
+
+
     def querySelectHashVerificada(self, email: str):
         """Retorna o hash e o verificada da tabela CONTA, e [] se não tiver"""
         sql = f"""SELECT HASH, VERIFICADA FROM PROJETO_ONG.CONTA WHERE EMAIL = '{email}'"""
         return sql
 
-    def queryUpdateVerificada(self, email: str):
+    def queryUpdateVerificada(self, email: str, updateDate: str):
         """Da update na tabela CONTA, muda o verificada de 0 para 1"""
         sql = f"""UPDATE PROJETO_ONG.CONTA
                   SET VERIFICADA = 1
+                     ,DATA_ATUALIZACAO = '{updateDate}'
                   WHERE EMAIL = '{email}'"""
         return sql
 
@@ -50,9 +64,10 @@ class ConsultasSQL_Login:
         sql = f"""SELECT COD_VERIFICACAO FROM PROJETO_ONG.REQUESTS_MUDAR_SENHA WHERE EMAIL = '{email}'"""
         return sql
 
-    def queryUpdateSenha(self, email: str, encriptedPassword: str):
+    def queryUpdateSenha(self, email: str, encriptedPassword: str, updateDate: str):
         """Da update na tabela CONTA, muda a senha"""
         sql = f"""UPDATE PROJETO_ONG.CONTA
                   SET SENHA = '{encriptedPassword}'
+                     ,DATA_ATUALIZACAO = '{updateDate}''
                   WHERE EMAIL = '{email}'"""
         return sql
