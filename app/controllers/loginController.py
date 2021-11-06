@@ -22,13 +22,13 @@ class LoginController:
         conn = DB.connect()
         cursor = conn.cursor()
 
-        encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
-        hash = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
-        creationDate = datetime.now()
-        creationDate = creationDate.strftime("%Y-%m-%d %H:%M:%S")
 
         # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
+            encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
+            hash = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
+            creationDate = datetime.now()
+            creationDate = creationDate.strftime("%Y-%m-%d %H:%M:%S")
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
                 conn.close()
                 return dumps({'type': 'ERROR', 'msg': 'Email inválido!'})
@@ -66,11 +66,11 @@ class LoginController:
         conn = DB.connect()
         cursor = conn.cursor()
 
-        updateDate = datetime.now()
-        updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
 
         # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
+            updateDate = datetime.now()
+            updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
                 conn.close()
                 return dumps({'type': 'ERROR', 'msg': 'Email inválido!'})
@@ -109,10 +109,10 @@ class LoginController:
         conn = DB.connect()
         cursor = conn.cursor()
 
-        encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
 
         # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
+            encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
                 conn.close()
                 return dumps({'type': 'WARNING', 'msg': 'Email inválido!'})
@@ -158,10 +158,10 @@ class LoginController:
         conn = DB.connect()
         cursor = conn.cursor()
 
-        verification_cod = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
 
         # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
+            verification_cod = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
                 conn.close()
                 return dumps({'type': 'WARNING', 'msg': 'Email inválido!'})
@@ -202,12 +202,12 @@ class LoginController:
         conn = DB.connect()
         cursor = conn.cursor()
 
-        encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
-        updateDate = datetime.now()
-        updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
 
         # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
+            encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
+            updateDate = datetime.now()
+            updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
                 conn.close()
                 return dumps({'type': 'WARNING', 'msg': 'Email inválido!'})
