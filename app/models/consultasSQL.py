@@ -68,6 +68,6 @@ class ConsultasSQL_Login:
         """Da update na tabela CONTA, muda a senha"""
         sql = f"""UPDATE PROJETO_ONG.CONTA
                   SET SENHA = '{encriptedPassword}'
-                     ,DATA_ATUALIZACAO = '{updateDate}''
+                     ,DATA_ATUALIZACAO = '{updateDate}'
                   WHERE EMAIL = '{email}'"""
         return sql
