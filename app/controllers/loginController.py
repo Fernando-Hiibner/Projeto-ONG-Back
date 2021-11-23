@@ -14,7 +14,7 @@ class LoginController:
         self.consultasSql_Login = ConsultasSQL_Login()
         self.accountTypes = ['Voluntario', 'ONG']
 
-    # TODO Validar password vazio, validar accountType que não seja permitido - Pro MVP
+    # TODO Validar password vazio, validar accountType que não seja permitido - Pro futuro
     def createUser(self, email: str, password: str, accountType: str, userInfo: dict):
         if accountType not in self.accountTypes:
             return dumps({"type": "ERROR", "msg" : "Tipo de conta invalido!"})
@@ -23,7 +23,7 @@ class LoginController:
         cursor = conn.cursor()
 
 
-        # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
+        # TODO Isso aqui tem que ser refinado no futuro, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
             encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
             hash = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
@@ -43,10 +43,8 @@ class LoginController:
                     else:
                         cursor.execute(self.consultasSql_Login.queryInsertConta(email, encriptedPassword, accountType, creationDate, hash))
                         if accountType == "Voluntario":
-                            # DONE Aqui inserir as informações do voluntario na tabela voluntarios
                             cursor.execute(self.consultasSql_Login.queryInsertVoluntario(email, userInfo['name'], userInfo['surname'], userInfo['age'], userInfo['gender']))
                         else:
-                            # DONE Aqui inserir as informações da ong na tabela ongs
                             cursor.execute(self.consultasSql_Login.queryInsertOng(email, userInfo['name']))
                         emailSender = Mail()
                         emailSender.send([email], "Teste Projeto Ong", f"{email}\n{hash}")
@@ -60,14 +58,13 @@ class LoginController:
             return dumps({'type': 'ERROR', 'msg': str(e)})
         return dumps({'type': 'SUCCESS', 'msg': 'Cadastro efetuado com sucesso!'})
 
-    # DONE Atualizar a data de atualização
     def authUser(self, email: str, hash: str):
         DB = ConexaoMySQL()
         conn = DB.connect()
         cursor = conn.cursor()
 
 
-        # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
+        # TODO Isso aqui tem que ser refinado pro futuro, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
             updateDate = datetime.now()
             updateDate = updateDate.strftime("%Y-%m-%d %H:%M:%S")
@@ -110,7 +107,7 @@ class LoginController:
         cursor = conn.cursor()
 
 
-        # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
+        # TODO Isso aqui tem que ser refinado pro futuro, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
             encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
@@ -129,7 +126,7 @@ class LoginController:
                     dbSenha = query[0][1]
                     verificada = query[0][2]
 
-                    # TODO Adicionar essa validação no MVP
+                    # TODO Adicionar essa validação no futuro
                     # if verificada == 0:
                     #     conn.close()
                     #     return dumps({'type': 'ERROR', 'msg': 'Esta conta não esta verificada!'})
@@ -159,7 +156,7 @@ class LoginController:
         cursor = conn.cursor()
 
 
-        # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
+        # TODO Isso aqui tem que ser refinado pro futuro, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
             verification_cod = md5(str(randint(0, 1000)).encode('UTF-8')).hexdigest()
             if not match(r'[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?([a-z]+)?$',email):
@@ -196,14 +193,13 @@ class LoginController:
 
         return dumps({'type': 'SUCCESS', 'msg': 'Requisição feita com sucesso'})
 
-    # DONE Atualizar a data de atualização
     def changePassword(self, email: str, password: str, verification_cod: str):
         DB = ConexaoMySQL()
         conn = DB.connect()
         cursor = conn.cursor()
 
 
-        # TODO Isso aqui tem que ser refinado pro MVP, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
+        # TODO Isso aqui tem que ser refinado pro futuro, as validaçoes de erros, tipo email vvazio tem que ser feitas la em cima e retornar uma mensagem coerente
         try:
             encriptedPassword = sha256(password.encode('UTF-8')).hexdigest()
             updateDate = datetime.now()
