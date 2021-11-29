@@ -71,3 +71,87 @@ class ConsultasSQL_Login:
                      ,DATA_ATUALIZACAO = '{updateDate}'
                   WHERE EMAIL = '{email}'"""
         return sql
+
+class ConsultasSQL_Profile:
+    def querySelectProfileInfos(self, email: str, tipoConta: str):
+        """Retorna as informações daquela conta"""
+        if(tipoConta == "Voluntario"):
+            sql = f"""SELECT CONTA.SENHA
+                            ,CONTA.TIPO_CONTA
+                            ,CONTA.DATA_CRIACAO
+                            ,CONTA.DATA_ATUALIZACAO
+                            ,CONTA.HASH
+                            ,CONTA.VERIFICADA
+                            ,CONTA.IMAGEM_PERFIL
+                            ,CONTA.IMAGEM_BANNER
+                            ,VOLUNTARIO.*
+                      FROM PROJETO_ONG.CONTA AS CONTA
+                      INNER JOIN PROJETO_ONG.VOLUNTARIOS AS VOLUNTARIO
+                      ON CONTA.EMAIL = VOLUNTARIO.EMAIL
+                      WHERE CONTA.EMAIL = '{email}'"""
+            return sql
+        else:
+            sql = f"""SELECT CONTA.SENHA
+                            ,CONTA.TIPO_CONTA
+                            ,CONTA.DATA_CRIACAO
+                            ,CONTA.DATA_ATUALIZACAO
+                            ,CONTA.HASH
+                            ,CONTA.VERIFICADA
+                            ,CONTA.IMAGEM_PERFIL
+                            ,CONTA.IMAGEM_BANNER
+                            ,ONG.*
+                      FROM PROJETO_ONG.CONTA AS CONTA
+                      INNER JOIN PROJETO_ONG.ONGS AS ONG
+                      ON CONTA.EMAIL = ONG.EMAIL
+                      WHERE CONTA.EMAIL = '{email}'"""
+            return sql
+    def querySelectProfilePictureAndBanner(self, email: str):
+        """Retorna as imagens de perfil e baner"""
+        sql = f"""SELECT IMAGEM_PERFIL, IMAGEM_BANNER FROM PROJETO_ONG.CONTA
+                  WHERE EMAIL = '{email}'"""
+        return sql
+    def querySelectTipoConta(self, email: str):
+        """Retorna o tipo da conta"""
+        sql = f"""SELECT TIPO_CONTA FROM PROJETO_ONG.CONTA
+                  WHERE EMAIL = '{email}'"""
+        return sql
+
+class ConsultasSQL_Feed:
+    def queryInsertPub(self, pubInfo: dict):
+        """Insere uma publicacao na lista de pubs"""
+        sql = f"""INSERT INTO PROJETO_ONG.PUBLICACAO(NOME, SOBRENOME, EMAIL, TEXTO, IMAGEM)
+                  VALUES('{pubInfo['nome']}', '{pubInfo['sobrenome']}','{pubInfo['email']}', '{pubInfo['texto']}', '{pubInfo['imagem']}')"""
+        return sql
+
+    def queryLoadPubPage(self, pageOffset: int, paginationRowCount: int):
+        """Retorna uma pagina de publicação"""
+        sql = f"""SELECT PUB.NOME
+                        ,PUB.SOBRENOME
+                        ,PUB.TEXTO
+                  	    ,PUB.IMAGEM
+                        ,PUB.DATA_PUBLICACAO
+                        ,CONTA.IMAGEM_BANNER
+                        ,CONTA.IMAGEM_PERFIL
+                   FROM PROJETO_ONG.PUBLICACAO AS PUB
+                  INNER JOIN PROJETO_ONG.CONTA AS CONTA
+                  ON PUB.EMAIL = CONTA.EMAIL
+                  ORDER BY PUB.DATA_PUBLICACAO DESC
+                  LIMIT {pageOffset},{paginationRowCount}"""
+        return sql
+
+    def queryLoadUserPubPage(self, email: str, pageOffset: int, paginationRowCount: int):
+        """Retorna uma pagina de publicação de um usuario especifico"""
+        sql = f"""SELECT PUB.NOME
+                        ,PUB.SOBRENOME
+                        ,PUB.TEXTO
+                  	    ,PUB.IMAGEM
+                        ,PUB.DATA_PUBLICACAO
+                        ,CONTA.IMAGEM_BANNER
+                        ,CONTA.IMAGEM_PERFIL
+                   FROM PROJETO_ONG.PUBLICACAO AS PUB
+                  INNER JOIN PROJETO_ONG.CONTA AS CONTA
+                  ON PUB.EMAIL = CONTA.EMAIL
+                  WHERE PUB.EMAIL = '{email}'
+                  ORDER BY PUB.DATA_PUBLICACAO DESC
+                  LIMIT {pageOffset},{paginationRowCount}"""
+        return sql

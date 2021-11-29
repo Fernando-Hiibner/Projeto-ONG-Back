@@ -4,6 +4,9 @@ from app import App
 
 # Importando os controller
 from .controllers.loginController import LoginController
+from .controllers.feedController import FeedController
+from .controllers.perfilController import PerfilController
+# from .controllers.uploadController import UploadController
 
 # Bloquear logs de endpoints de rotas especificas
 from werkzeug import serving
@@ -31,6 +34,11 @@ def disable_endpoint_logs():
 @App.route('/', methods=['GET', 'POST'])
 def raiz():
     return make_response(jsonify({"Mensagem" : "Bem vindo a API do Projeto ONG"})), 200
+
+# @App.route('/uploadFile', methods=['POST'])
+# def uploadFile():
+#     _UploadController = UploadController
+#     return _UploadController.uploadFile(request)
 
 @App.route('/createUser', methods=['POST'])
 def createUser():
@@ -68,3 +76,38 @@ def changePassword():
 #     BODY = request.get_json(force=True)
 #     _LoginController = LoginController()
 #     return _LoginController.deleteUser(BODY['email'])
+
+@App.route('/getAccountType', methods=['POST'])
+def getAccountType():
+    BODY = request.get_json(force=True)
+    _PerfilController = PerfilController()
+    return _PerfilController.getAccoutType(BODY['email'])
+
+@App.route('/profileInfos', methods=['POST'])
+def profileInfos():
+    BODY = request.get_json(force=True)
+    _PerfilController = PerfilController()
+    return _PerfilController.profileInfos(BODY['email'], BODY['tipoConta'])
+
+@App.route('/getProfilePictureAndBanner', methods=['POST'])
+def getProfilePictureAndBanner():
+    BODY = request.get_json(force=True)
+    _PerfilController = PerfilController()
+    return _PerfilController.getProfilePictureAndBanner(BODY['email'])
+
+@App.route('/postPub', methods=['POST'])
+def postPub():
+    BODY = request.get_json(force=True)
+    _FeedController = FeedController()
+    return _FeedController.postPub(BODY)
+
+@App.route('/loadPub/<page>', methods=['GET'])
+def loadPub(page):
+    _FeedController = FeedController()
+    return _FeedController.loadPub(page)
+
+@App.route('/loadUserPub/<page>', methods=['POST'])
+def loadUserPub(page):
+    BODY = request.get_json(force=True)
+    _FeedController = FeedController()
+    return _FeedController.loadUserPub(BODY['email'], page)
